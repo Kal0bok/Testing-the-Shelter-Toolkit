@@ -10,6 +10,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -104,38 +106,7 @@ class AnimalValidatorTest {
         }
     }
 
-
-    @Nested
-    @DisplayName("validateAge")
-    class ValidateAge {
-
-        @ParameterizedTest
-        @CsvSource({
-                "0",
-                "1",
-                "10",
-                "50"
-        })
-        @DisplayName("accepts valid ages")
-        void shouldAcceptValidAges(int age) {
-            // TODO: Call validator.validateAge(age) — it should NOT throw
-        }
-
-        @ParameterizedTest
-        @CsvSource({
-                "-1, must not be negative",
-                "-100, must not be negative",
-                "51, seems unrealistic",
-                "999, seems unrealistic"
-        })
-        @DisplayName("rejects invalid ages with correct message")
-        void shouldRejectInvalidAges(int age, String expectedMessagePart) {
-            // TODO: Verify that validateAge(age) throws IllegalArgumentException
-            // TODO: Check that the exception message contains expectedMessagePart
-        }
-    }
-
-    // ==================== Task 3: Exception tests ====================
+    // TASK 3: EXCEPTION TESTS
 
     @Nested
     @DisplayName("validate (full animal)")
@@ -144,37 +115,39 @@ class AnimalValidatorTest {
         @Test
         @DisplayName("throws NullPointerException for null animal")
         void shouldThrowForNullAnimal() {
-            // TODO: Call validator.validate(null)
-            // TODO: Verify it throws NullPointerException
-            // TODO: Check message contains "must not be null"
+            NullPointerException exception = assertThrows(
+                    NullPointerException.class,
+                    () -> validator.validate(null)
+            );
+            assertTrue(exception.getMessage().contains("must not be null"));
         }
 
         @Test
         @DisplayName("throws for animal with blank name")
         void shouldThrowForBlankName() {
-            // TODO: Create an Animal with blank name
-            // TODO: Verify validate() throws IllegalArgumentException
+            Animal invalid = new Animal("", "Dog", 3, true, LocalDate.now());
+            assertThrows(IllegalArgumentException.class, () -> validator.validate(invalid));
         }
 
         @Test
         @DisplayName("throws for animal with blank species")
         void shouldThrowForBlankSpecies() {
-            // TODO: Create an Animal with valid name but blank species
-            // TODO: Verify validate() throws IllegalArgumentException
+            Animal invalid = new Animal("Buddy", "", 3, true, LocalDate.now());
+            assertThrows(IllegalArgumentException.class, () -> validator.validate(invalid));
         }
 
         @Test
         @DisplayName("throws for animal with negative age")
         void shouldThrowForNegativeAge() {
-            // TODO: Create an Animal with negative age
-            // TODO: Verify validate() throws IllegalArgumentException
+            Animal invalid = new Animal("Buddy", "Dog", -1, true, LocalDate.now());
+            assertThrows(IllegalArgumentException.class, () -> validator.validate(invalid));
         }
 
         @Test
         @DisplayName("does not throw for fully valid animal")
         void shouldPassForValidAnimal() {
-            // TODO: Create a valid Animal (name="Buddy", species="Dog", age=3, vaccinated=true, date=today)
-            // TODO: Call validate() and verify no exception is thrown
+            Animal valid = new Animal("Buddy", "Dog", 3, true, LocalDate.now());
+            assertDoesNotThrow(() -> validator.validate(valid));
         }
     }
 }
