@@ -1,5 +1,6 @@
 package lv.bootcamp.shelter.task23;
 
+import lv.bootcamp.shelter.model.Animal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,17 +10,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Tasks 2 & 3: Parameterized tests and exception tests
+ - Tasks 2 & 3: Parameterized tests and exception tests
  *
- * Practice:
- * - @ParameterizedTest with @CsvSource
- * - @ValueSource and @NullAndEmptySource
- * - assertThrows with message checks
- * - AssertJ assertThatThrownBy
+ - Practice:
+ - - @ParameterizedTest with @CsvSource
+ - - @ValueSource and @NullAndEmptySource
+ - - assertThrows with message checks
+ - - AssertJ assertThatThrownBy
  *
- * Instructions:
- * Write tests for AnimalValidator. Each TODO describes one test to write.
+ - Instructions:
+ - Write tests for AnimalValidator. Each TODO describes one test to write.
  */
 @DisplayName("AnimalValidator")
 class AnimalValidatorTest {
@@ -31,7 +34,7 @@ class AnimalValidatorTest {
         validator = new AnimalValidator();
     }
 
-    // ==================== Task 2: Parameterized tests ====================
+    // TASK 2: PARAMETERIZED TESTS
 
     @Nested
     @DisplayName("validateName")
@@ -41,8 +44,7 @@ class AnimalValidatorTest {
         @ValueSource(strings = {"Buddy", "Luna", "Mr. Whiskers", "X"})
         @DisplayName("accepts valid names")
         void shouldAcceptValidNames(String name) {
-            // TODO: Call validator.validateName(name) — it should NOT throw
-            // Hint: use assertDoesNotThrow(() -> validator.validateName(name))
+            assertDoesNotThrow(() -> validator.validateName(name));
         }
 
         @ParameterizedTest
@@ -50,18 +52,58 @@ class AnimalValidatorTest {
         @ValueSource(strings = {"   ", "\t", "\n"})
         @DisplayName("rejects blank or null names")
         void shouldRejectBlankNames(String name) {
-            // TODO: Verify that validateName throws IllegalArgumentException
-            // TODO: Check the message contains "must not be blank"
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> validator.validateName(name)
+            );
+            assertTrue(exception.getMessage().contains("must not be blank"));
         }
 
         @Test
         @DisplayName("rejects name longer than 100 characters")
         void shouldRejectOverlyLongName() {
-            // TODO: Create a string longer than 100 characters
-            // TODO: Verify that validateName throws IllegalArgumentException
-            // TODO: Check the message contains "100 characters"
+            String longName = "a".repeat(101);
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> validator.validateName(longName)
+            );
+            assertTrue(exception.getMessage().contains("100 characters"));
         }
     }
+
+    @Nested
+    @DisplayName("validateAge")
+    class ValidateAge {
+
+        @ParameterizedTest
+        @CsvSource({
+                "0",
+                "1",
+                "10",
+                "50"
+        })
+        @DisplayName("accepts valid ages")
+        void shouldAcceptValidAges(int age) {
+            assertDoesNotThrow(() -> validator.validateAge(age));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "-1, must not be negative",
+                "-100, must not be negative",
+                "51, seems unrealistic",
+                "999, seems unrealistic"
+        })
+        @DisplayName("rejects invalid ages with correct message")
+        void shouldRejectInvalidAges(int age, String expectedMessagePart) {
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> validator.validateAge(age)
+            );
+            assertTrue(exception.getMessage().contains(expectedMessagePart));
+        }
+    }
+
 
     @Nested
     @DisplayName("validateAge")
