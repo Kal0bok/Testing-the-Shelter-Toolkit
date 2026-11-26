@@ -29,7 +29,8 @@ class AgeCalculatorTest {
         calculator = new AgeCalculator();
     }
 
-    // toMonths()
+    // TO MONTHS TESTS
+
     @Test
     @DisplayName("toMonths: 0 years returns 0 months")
     void shouldReturnZeroMonthsForZeroYears() {
@@ -50,7 +51,8 @@ class AgeCalculatorTest {
         assertThrows(IllegalArgumentException.class, () -> calculator.toMonths(-1));
     }
 
-    //dogToHumanYears()
+    // DOG TO HUMAN YEARS TESTS
+
     @Test
     @DisplayName("dogToHumanYears: age 0 returns 0")
     void shouldReturnZeroHumanYearsForPuppy() {
@@ -85,11 +87,11 @@ class AgeCalculatorTest {
         assertThrows(IllegalArgumentException.class, () -> calculator.dogToHumanYears(-1));
     }
 
-    //isBaby()
+    // IS BABY TESTS
 
     @Test
     @DisplayName("isBaby: age 0 returns true")
-    void shouldReturnTrueForAgZero() {
+    void shouldReturnTrueForAgeZero() {
         boolean result = calculator.isBaby(0);
         assertTrue(result);
     }

@@ -17,7 +17,7 @@ public class IntakeService {
 
     public IntakeService(AnimalRepository repository) {
         this.repository = repository;
-        this.validator = new AnimalValidator();`
+        this.validator = new AnimalValidator();
     }
 
     /**
